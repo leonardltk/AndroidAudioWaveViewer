@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     public void AddDetail(GraphView graph){
 
         /** Axis Formats */
-        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+        /*graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
             @Override
             public String formatLabel(double value, boolean isValueX) {
                 if (isValueX) { // Plot for x
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     return super.formatLabel(value, isValueX);
                 }
             }
-        });
+        });*/
 
         /** Set Scrolling */
         // activate zooming
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         /** ------ Plot Wave ------ */
         GraphDPts = new DataPoint[recordLength];
         for (int i = 0; i < recordLength; i++) {
-            GraphDPts[i] = new DataPoint(i, recordBuffer[i]);
+            GraphDPts[i] = new DataPoint((float) i/samplingRate, recordBuffer[i]);
         }
         series = new LineGraphSeries<>(GraphDPts);
         graph.addSeries(series);
@@ -307,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
         GraphDPts = new DataPoint[2];
         for (int i = 0; i < BeatsSize; i++) {
             SampleIdx = Beats.get(i)*hop_length;
-            GraphDPts[0] = new DataPoint(SampleIdx, -40000);
-            GraphDPts[1] = new DataPoint(SampleIdx, 40000);
+            GraphDPts[0] = new DataPoint((float) SampleIdx/samplingRate, -40000);
+            GraphDPts[1] = new DataPoint((float) SampleIdx/samplingRate, 40000);
             series = new LineGraphSeries<>(GraphDPts);
             series.setColor(Color.RED);
             graph.addSeries(series);
