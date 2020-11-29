@@ -7,29 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.jjoe64.graphview.GraphView
-        android:id="@+id/graph"
-        android:layout_width="410dp"
-        android:layout_height="269dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/play"
-        app:layout_constraintEnd_toEndOf="parent"
+<!-- Canvas -->
+    <!--android:layout_height="217dp"-->
+
+<!-- Play Stop -->
+
+    <TextView
+        android:id="@+id/WaveformTextView"
+        android:layout_width="110dp"
+        android:layout_height="41dp"
+        android:text="WaveformDetails"
+        app:layout_constraintBottom_toTopOf="@+id/waveformView"
+        app:layout_constraintEnd_toStartOf="@+id/BeatTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/WaveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:onClick="dispWave"
-        android:text="@string/PlotWave"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/beattrack"
+    <TextView
+        android:id="@+id/BeatTextView"
+        android:layout_width="81dp"
+        android:layout_height="38dp"
+        android:text="BeatDetails"
+        app:layout_constraintBottom_toTopOf="@+id/waveformView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/WaveformTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.audio_v2.WaveformView
+        android:id="@+id/waveformView"
+        android:layout_width="369dp"
+        android:layout_height="317dp"
+        app:layout_constraintBottom_toTopOf="@+id/play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/play"
-        app:layout_constraintVertical_bias="0.501" />
+        app:layout_constraintTop_toBottomOf="@+id/WaveformTextView" />
 
     <Button
         android:id="@+id/play"
@@ -39,11 +50,11 @@
         android:layout_marginLeft="30dp"
         android:onClick="playIT"
         android:text="@string/play"
-        app:layout_constraintBottom_toTopOf="@+id/WaveButton"
+        app:layout_constraintBottom_toTopOf="@+id/PlotWaveButton"
         app:layout_constraintEnd_toStartOf="@+id/stop"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graph" />
+        app:layout_constraintTop_toBottomOf="@+id/waveformView" />
 
     <Button
         android:id="@+id/stop"
@@ -53,43 +64,46 @@
         android:layout_marginRight="30dp"
         android:onClick="stopIT"
         android:text="@string/stop"
-        app:layout_constraintBottom_toTopOf="@+id/beattrack"
+        app:layout_constraintBottom_toTopOf="@+id/BeatTrackButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/play"
-        app:layout_constraintTop_toBottomOf="@+id/graph" />
+        app:layout_constraintTop_toBottomOf="@+id/waveformView"
+        app:layout_constraintVertical_bias="0.5" />
 
+<!-- Plots -->
     <Button
-        android:id="@+id/beattrack"
+        android:id="@+id/PlotWaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
+        android:onClick="dispWave_Canvas"
+        android:text="@string/PlotWave"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/BeatTrackButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/play"
+        app:layout_constraintVertical_bias="0.5" />
+    <Button
+        android:id="@+id/BeatTrackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="PlotBeatTracks"
+        android:text="@string/beat_track"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sliderButton"
+        app:layout_constraintStart_toEndOf="@+id/PlotWaveButton"
+        app:layout_constraintTop_toBottomOf="@+id/stop" />
+    <Button
+        android:id="@+id/sliderButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
-        android:onClick="beattrack"
-        android:text="@string/beat_track"
+        android:text="Slider"
+        android:onClick="runSlider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/WaveButton"
+        app:layout_constraintStart_toEndOf="@+id/BeatTrackButton"
         app:layout_constraintTop_toBottomOf="@+id/stop" />
-
-<!-- For spectrogram (Abandoned) -->
-    <!--<TextView
-        android:id="@+id/Header"
-        android:layout_width="337dp"
-        android:layout_height="210dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/HeaderText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.50
-"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graph" />-->
-    <!--<Button
-        android:id="@+id/SpectrogramButton"
-        android:layout_width="320dp"
-        android:layout_height="0dp"
-        android:text="@string/PlotSpect"
-        android:onClick="runSpect"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Header" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
