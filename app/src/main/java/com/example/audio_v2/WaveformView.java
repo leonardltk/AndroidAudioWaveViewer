@@ -12,8 +12,12 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 public class WaveformView extends View {
+    /* Custom Canvas */
     // https://stackoverflow.com/questions/45162798/audio-visualization-android-code-with-the-moving-line
     // https://www.youtube.com/watch?v=sb9OEl4k9Dk
+    /* Scrolling Canvas */
+    // https://softwarehealthclub.wordpress.com/programming/android-development/how-to-add-a-scrolling-canvas-using-scrollview/
+    // https://stackoverflow.com/questions/6674341/how-to-use-scrollview-in-android
 
     /** Init Variables */
     /* Canvas setup */
@@ -36,6 +40,7 @@ public class WaveformView extends View {
     private Paint beatPaint; // beats line characteristics
     /* debug */
     private Paint debugPaint;
+    Context app_context;
 
     /** Constructors */
     public WaveformView(Context context) {
@@ -119,11 +124,13 @@ public class WaveformView extends View {
                     linePaint);
         }
         /* Determine the end of the waveform */
-        curX += LINE_WIDTH ; //increase by line width
-        canvas.drawLine(
-                curX, 0,
-                curX, viewHeight,
-                linePaint);
+        for (int idx=0; idx<100; idx++) {
+            curX += LINE_WIDTH ; //increase by line width
+            canvas.drawLine(
+                    curX, 0,
+                    curX, viewHeight,
+                    linePaint);
+        }
 
         /** Plot Beats */
         if (Beats.size()>1){
@@ -146,6 +153,15 @@ public class WaveformView extends View {
                         debugPaint);
             }
         }
+    }
+    /* Expand the canvas to desired width.
+    MUST be included otherwise one or both scroll views will be compressed to zero pixels
+     and the scrollview will then be invisible */
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = 50000; // To cater to a song that is as long as 50000/16000 seconds
+        int height = heightMeasureSpec;
+        setMeasuredDimension(width, height);
     }
 
     /** Waveform */

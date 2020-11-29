@@ -7,41 +7,45 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<!-- Canvas -->
-    <!--android:layout_height="217dp"-->
-
-<!-- Play Stop -->
-
+<!-- Header -->
     <TextView
         android:id="@+id/WaveformTextView"
         android:layout_width="110dp"
         android:layout_height="41dp"
         android:text="WaveformDetails"
-        app:layout_constraintBottom_toTopOf="@+id/waveformView"
+        app:layout_constraintBottom_toTopOf="@+id/hscroll"
         app:layout_constraintEnd_toStartOf="@+id/BeatTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/BeatTextView"
         android:layout_width="81dp"
         android:layout_height="38dp"
         android:text="BeatDetails"
-        app:layout_constraintBottom_toTopOf="@+id/waveformView"
+        app:layout_constraintBottom_toTopOf="@+id/hscroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/WaveformTextView"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.audio_v2.WaveformView
-        android:id="@+id/waveformView"
+<!-- Canvas -->
+    <HorizontalScrollView
+        android:id="@+id/hscroll"
         android:layout_width="369dp"
         android:layout_height="317dp"
         app:layout_constraintBottom_toTopOf="@+id/play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/WaveformTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/WaveformTextView">
 
+        <com.example.audio_v2.WaveformView
+            android:id="@+id/waveformView"
+            android:layout_width="369dp"
+            android:layout_height="317dp" />
+
+    </HorizontalScrollView>
+
+<!-- Play Stop -->
     <Button
         android:id="@+id/play"
         android:layout_width="wrap_content"
@@ -54,8 +58,7 @@
         app:layout_constraintEnd_toStartOf="@+id/stop"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/waveformView" />
-
+        app:layout_constraintTop_toBottomOf="@+id/hscroll" />
     <Button
         android:id="@+id/stop"
         android:layout_width="wrap_content"
@@ -67,7 +70,7 @@
         app:layout_constraintBottom_toTopOf="@+id/BeatTrackButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/play"
-        app:layout_constraintTop_toBottomOf="@+id/waveformView"
+        app:layout_constraintTop_toBottomOf="@+id/hscroll"
         app:layout_constraintVertical_bias="0.5" />
 
 <!-- Plots -->
@@ -106,4 +109,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/BeatTrackButton"
         app:layout_constraintTop_toBottomOf="@+id/stop" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

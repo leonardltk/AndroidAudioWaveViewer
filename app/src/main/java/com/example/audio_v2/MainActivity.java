@@ -4,9 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.os.*;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.HorizontalScrollView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.io.FileInputStream;
@@ -18,13 +19,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.LineGraphSeries;
-
 import net.galmiza.android.engine.sound.SoundEngine;
 
-import com.jjoe64.graphview.series.DataPoint;
 
 public class MainActivity extends AppCompatActivity {
     /** ------------ Variables ------------ */
