@@ -8,26 +8,38 @@
     tools:context=".MainActivity">
 
 <!-- Header -->
+    <Button
+        android:id="@+id/sliderButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="LoadAudio"
+        android:text="Load Audio"
+        app:layout_constraintBottom_toTopOf="@+id/hscroll"
+        app:layout_constraintEnd_toStartOf="@+id/WaveformTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/WaveformTextView"
-        android:layout_width="110dp"
-        android:layout_height="41dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="WaveformDetails"
         app:layout_constraintBottom_toTopOf="@+id/hscroll"
         app:layout_constraintEnd_toStartOf="@+id/BeatTextView"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sliderButton"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/BeatTextView"
-        android:layout_width="81dp"
-        android:layout_height="38dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="BeatDetails"
         app:layout_constraintBottom_toTopOf="@+id/hscroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/WaveformTextView"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!-- Canvas -->
+<!-- Scrolling Canvas containing both Waveform & Slider -->
     <HorizontalScrollView
         android:id="@+id/hscroll"
         android:layout_width="369dp"
@@ -38,10 +50,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/WaveformTextView">
 
-        <com.example.audio_v2.WaveformView
-            android:id="@+id/waveformView"
-            android:layout_width="369dp"
-            android:layout_height="317dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <com.example.audio_v2.WaveformView
+                android:id="@+id/waveformView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.example.audio_v2.SliderView
+                android:id="@+id/sliderview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </HorizontalScrollView>
 
@@ -50,8 +79,6 @@
         android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
         android:onClick="playIT"
         android:text="@string/play"
         app:layout_constraintBottom_toTopOf="@+id/PlotWaveButton"
@@ -59,12 +86,11 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hscroll" />
+
     <Button
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
         android:onClick="stopIT"
         android:text="@string/stop"
         app:layout_constraintBottom_toTopOf="@+id/BeatTrackButton"
@@ -78,8 +104,6 @@
         android:id="@+id/PlotWaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
         android:onClick="dispWave_Canvas"
         android:text="@string/PlotWave"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -87,6 +111,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/play"
         app:layout_constraintVertical_bias="0.5" />
+
     <Button
         android:id="@+id/BeatTrackButton"
         android:layout_width="wrap_content"
@@ -94,20 +119,8 @@
         android:onClick="PlotBeatTracks"
         android:text="@string/beat_track"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sliderButton"
-        app:layout_constraintStart_toEndOf="@+id/PlotWaveButton"
-        app:layout_constraintTop_toBottomOf="@+id/stop" />
-    <Button
-        android:id="@+id/sliderButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
-        android:text="Slider"
-        android:onClick="runSlider"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/BeatTrackButton"
+        app:layout_constraintStart_toEndOf="@+id/PlotWaveButton"
         app:layout_constraintTop_toBottomOf="@+id/stop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

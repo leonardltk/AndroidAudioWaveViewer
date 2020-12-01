@@ -6,8 +6,6 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.io.FileInputStream;
@@ -36,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> Beats;
     /* -- Canvas Params -- */
     private WaveformView mWaveformView;
+    /* -- Canvas Params -- */
+    private SliderView mSliderView;
 
 
     /** ------------ When App start, run these by default ------------ */
@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         /* WaveformView Canvas */
         mWaveformView = (WaveformView) findViewById(R.id.waveformView);
+
+        /** SliderView Canvas */
+        mSliderView = (SliderView) findViewById(R.id.sliderview);
     }
     /* When pause the application, stop the song. */
     @Override
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     /* Play button. */
     public void playIT(View v){
         mySong.start();
+        mSliderView.Draw1(3*16000);
     }
     /* Stop button. */
     public void stopIT(View v){
@@ -73,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /** ------------ Displaying Waveform ------------ */
+    /** ------------ Load Audio ------------ */
     /** Helper for Reading Audio */
     /* Converting bytes to int */
     public long getLE2(byte[] buffer) {
@@ -118,20 +122,24 @@ public class MainActivity extends AppCompatActivity {
         }
         return WaveOut;
     }
-    /** dispWave */
-    public void dispWave_Canvas(View v){
+    public void LoadAudio(View v){
         /** ------ Read Audio ------ */
         amplitudes = readAudio_ArrayList(R.raw.test);
 
+        /** ------ Write Waveform Details ------ */
+        TextView WaveDetails = v.getRootView().findViewById(R.id.WaveformTextView);
+        String StringWaves = "Size=" + amplitudes.size() + "\nDuration=" + amplitudes.size()/samplingRate +
+                "\nMax=" + Collections.max(amplitudes) + "\nMin=" + Collections.min(amplitudes);
+        WaveDetails.setText(StringWaves);
+    }
+
+
+    /** ------------ Displaying Waveform ------------ */
+    public void dispWave_Canvas(View v){
         /** ------ Plot ------ */
         mWaveformView.clearAmplitudes();
         mWaveformView.setAmplitudes(amplitudes);
         mWaveformView.drawAmplitudes();
-
-        /** ------ Write Waveform Details ------ */
-        TextView WaveDetails = v.getRootView().findViewById(R.id.WaveformTextView);
-        String StringWaves = "Size=" + amplitudes.size() + "\nMax=" + Collections.max(amplitudes) + "\nMin=" + Collections.min(amplitudes);
-        WaveDetails.setText(StringWaves);
     }
 
 
@@ -169,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
         Beats = new ArrayList<Integer>();
 
         /** ------ Get the beats (fake) ------ */
-        for (int i=0; i<1200; i++){
-            Beats.add(3*i);
+        for (int i=0; i<13; i++){
+            Beats.add(30*i);
         }
         /* -- Write in string form to local file  */
         ArrayList2File(Beats, "Beats.txt");
@@ -188,12 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
         /** ------ Write Beat Details ------ */
         TextView BeatDetails = v.getRootView().findViewById(R.id.BeatTextView);
-        String StringBeats = "" + Beats.size();
+        String StringBeats = "Number of Beats = " + Beats.size() + "";
         BeatDetails.setText(StringBeats);
-    }
-
-
-    /** ------------ runSlider ------------ */
-    public void runSlider(View v){
     }
 }

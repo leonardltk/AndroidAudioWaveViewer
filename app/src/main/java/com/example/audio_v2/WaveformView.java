@@ -33,6 +33,7 @@ public class WaveformView extends View {
     Integer samplingRate = 16000;
     private Paint linePaint; // waveform line characteristics
     float scaledHeight;
+    private int SkipSample = 30; // Resolution for display
     /* Beats */
     ArrayList<Integer> Beats;
     float SampleIdx;
@@ -40,7 +41,6 @@ public class WaveformView extends View {
     private Paint beatPaint; // beats line characteristics
     /* debug */
     private Paint debugPaint;
-    Context app_context;
 
     /** Constructors */
     public WaveformView(Context context) {
@@ -112,7 +112,12 @@ public class WaveformView extends View {
         /** Plot Waveform */
         int middle = viewHeight/2; //middle of view
         int curX = 0;
+        int npts = -1;
         for (float power : amplitudes) {
+            npts++;
+            if (npts%SkipSample > 0){
+                continue;
+            }
 
             scaledHeight = power/LINE_SCALE; //scale the power
             curX += LINE_WIDTH ; //increase by line width
@@ -135,9 +140,10 @@ public class WaveformView extends View {
         /** Plot Beats */
         if (Beats.size()>1){
             QuadShift = (Beats.get(1) - Beats.get(0))*hop_length/4;
+            QuadShift /= SkipSample;
         }
         for (float FrameIdx : Beats){
-            SampleIdx = FrameIdx*hop_length;
+            SampleIdx = FrameIdx*hop_length/SkipSample;
 
             /* draw Major beats */
             canvas.drawLine(
@@ -175,7 +181,7 @@ public class WaveformView extends View {
         postInvalidate();
     }
 
-    /** Waveform */
+    /** Beats */
     public void setBeats(ArrayList<Integer> BeatsIN){
         Beats = BeatsIN;
     }
