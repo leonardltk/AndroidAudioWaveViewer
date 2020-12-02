@@ -23,17 +23,23 @@ public class WaveformView extends View {
     private static final int LINE_SCALE = 150; //scales visualiser lines, default=150
     private int viewWidth;
     private int viewHeight;
+    /* Axis */
+    private float TenthSec = (float) 53.325;
+    private ArrayList<Integer> xAxisMinor, xAxisMajor;
+    private Paint AxisPaint;
     /* Waveform */
     private ArrayList<Float> amplitudes;
-    Integer hop_length = 128;
-    Integer samplingRate = 16000;
-    private Paint linePaint; // waveform line characteristics
-    float scaledHeight;
+    private float power;
+    private Integer hop_length = 128;
+    private Integer samplingRate = 16000;
     private int SkipSample = 30; // Resolution for display
+    private float scaledHeight;
+    private int middle;
+    private Paint linePaint; // waveform line characteristics
     /* Beats */
-    ArrayList<Integer> Beats;
-    float SampleIdx;
-    int QuadShift = 0;
+    private ArrayList<Integer> Beats;
+    private float SampleIdx;
+    private int QuadShift = 0;
     private Paint beatPaint; // beats line characteristics
     private Paint MinorBeatsPaint; // For the in betweens beats. Default to quads
     /* debug */
@@ -49,26 +55,48 @@ public class WaveformView extends View {
         init(attrs);
     }
     public void init(@Nullable AttributeSet set){
-        /* Waveform */
+        /** Axis */
+        AxisPaint = new Paint ();
+        AxisPaint.setColor(Color.WHITE);
+        AxisPaint.setStrokeWidth(5);
+        AxisPaint.setTextSize(20);
+        xAxisMinor = initAxisMinor();
+        xAxisMajor = initAxisMajor();
+
+        /** Waveform */
         linePaint = new Paint ();
         linePaint.setColor(Color.GREEN);
-        linePaint.setStrokeWidth(LINE_WIDTH);
+        linePaint.setStrokeWidth(1);
         amplitudes = initAmplitudes();
 
-        /* Beats */
+        /** Beats */
+        /* Major Beats */
         beatPaint = new Paint ();
         beatPaint.setColor(Color.RED);
-        beatPaint.setStrokeWidth(5);
+        beatPaint.setStrokeWidth(4);
         Beats = initBeats();
-
-        /* debug */
+        /* Beats */
         MinorBeatsPaint = new Paint ();
         MinorBeatsPaint.setColor(Color.WHITE);
-        MinorBeatsPaint.setStrokeWidth(5);
+        MinorBeatsPaint.setStrokeWidth(2);
+    }
+    public ArrayList<Integer> initAxisMinor(){
+        xAxisMinor = new ArrayList<>();
+        for (Integer idx=0; idx<50000/TenthSec; idx++){
+            xAxisMinor.add( (int) (idx*TenthSec) );
+        }
+        return xAxisMinor;
+    }
+    public ArrayList<Integer> initAxisMajor(){
+        xAxisMajor = new ArrayList<>();
+        for (Integer idx=0; idx<50000/(TenthSec*10); idx++){
+            xAxisMajor.add( (int) (idx*TenthSec*10) );
+        }
+        return xAxisMajor;
     }
     public ArrayList<Float> initAmplitudes(){
         amplitudes = new ArrayList<>();
-        for (Integer idx=0; idx<1024; idx++){ // viewWidth
+        for (Integer idx=0; idx<2*samplingRate; idx++){ // viewWidth
             amplitudes.add( (float) LINE_SCALE*5 );
         }
         return amplitudes;
@@ -92,37 +120,57 @@ public class WaveformView extends View {
     @Override
     public void onDraw (Canvas canvas){
         super.onDraw(canvas);
-
-        /* bg color */
+        /** Background color */
         canvas.drawColor(Color.BLACK);
 
-        /** Plot Waveform */
-        int middle = viewHeight/2; //middle of view
-        int curX = 0;
-        int npts = -1;
-        for (float power : amplitudes) {
-            npts++;
-            if (npts%SkipSample > 0){
-                continue;
+
+        /** Plot Axis */
+        // Horizontal
+        canvas.drawLine(
+                0, (float) viewHeight*9/10,
+                viewWidth, (float) viewHeight*9/10,
+                AxisPaint);
+        // Minor Verticals & Duration
+        int AxisSeconds=0;
+        for (int currAxis : xAxisMinor){
+            canvas.drawLine(
+                    currAxis, (float) viewHeight*9/10,
+                    currAxis, (float) viewHeight*925/1000,
+                    AxisPaint);
+            if (AxisSeconds>0) {
+                canvas.drawText(
+                        String.format("%.1f", AxisSeconds*0.1),
+                        currAxis-10,
+                        viewHeight*975/1000, AxisPaint);
             }
+            AxisSeconds++;
+        }
+        // Major Verticals
+        for (int currAxis : xAxisMajor){
+            canvas.drawLine(
+                    currAxis, (float) viewHeight*9/10,
+                    currAxis, (float) viewHeight*95/100,
+                    AxisPaint);
+        }
 
-            scaledHeight = power/LINE_SCALE; //scale the power
-            curX += LINE_WIDTH ; //increase by line width
-
+        /** Plot Waveform */
+        middle = viewHeight/2; //middle of view
+        for (int idx=0; idx<amplitudes.size(); idx+=SkipSample ) {
+            power = amplitudes.get(idx);
+            scaledHeight = power/(2*LINE_SCALE); //scale the power
             // draw a line representing this item in the amplitudes ArrayList
             canvas.drawLine(
-                    curX, middle + scaledHeight/2,
-                    curX, middle - scaledHeight/2,
+                    idx/SkipSample, middle + scaledHeight,
+                    idx/SkipSample, middle - scaledHeight,
                     linePaint);
         }
         /* Determine the end of the waveform */
-        for (int idx=0; idx<100; idx++) {
-            curX += LINE_WIDTH ; //increase by line width
-            canvas.drawLine(
-                    curX, 0,
-                    curX, viewHeight,
-                    linePaint);
-        }
+//        for (int idx=amplitudes.size()/SkipSample; idx<amplitudes.size()/SkipSample+100; idx++) {
+//            canvas.drawLine(
+//                    idx, 0,
+//                    idx, viewHeight*9/10,
+//                    linePaint);
+//        }
 
         /** Plot Beats */
         if (Beats.size()>1){
@@ -135,14 +183,14 @@ public class WaveformView extends View {
             /* draw Major beats */
             canvas.drawLine(
                     SampleIdx, 0,
-                    SampleIdx, viewHeight,
+                    SampleIdx, viewHeight*9/10,
                     beatPaint);
 
             /* draw Minor beats */
             for (int jdx=1; jdx<4; jdx++){
                 canvas.drawLine(
                         SampleIdx + jdx*QuadShift, 0,
-                        SampleIdx + jdx*QuadShift, viewHeight,
+                        SampleIdx + jdx*QuadShift, viewHeight*9/10,
                         MinorBeatsPaint);
             }
         }
@@ -152,7 +200,7 @@ public class WaveformView extends View {
      and the scrollview will then be invisible */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = 50000; // To cater to a song that is as long as 50000/16000 seconds
+        int width = 20000; // To cater to a song that is as long as 20000/16000 seconds
         int height = heightMeasureSpec;
         setMeasuredDimension(width, height);
     }

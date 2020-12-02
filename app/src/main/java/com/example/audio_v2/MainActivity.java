@@ -158,8 +158,11 @@ public class MainActivity extends AppCompatActivity {
 
         /** ------ Write Waveform Details ------ */
         TextView WaveDetails = v.getRootView().findViewById(R.id.WaveformTextView);
-        String StringWaves = "Size=" + amplitudes.size() + "\nDuration=" + amplitudes.size()/samplingRate +
-                "\nMax=" + Collections.max(amplitudes) + "\nMin=" + Collections.min(amplitudes);
+        String StringWaves =
+                "Size=" + amplitudes.size() +
+                "\nDuration=" + amplitudes.size()/samplingRate +
+                "\nMax=" + Collections.max(amplitudes) +
+                "\nMin=" + Collections.min(amplitudes);
         WaveDetails.setText(StringWaves);
     }
 

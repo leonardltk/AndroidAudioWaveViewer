@@ -55,7 +55,7 @@ public class SliderView extends View {
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = 50000; // To cater to a song that is as long as 50000/16000 seconds
+        int width = 20000; // To cater to a song that is as long as 20000/16000 seconds
         int height = heightMeasureSpec; // heightMeasureSpec MeasureSpec.getSize(heightMeasureSpec)
         setMeasuredDimension(width, height);
     }
