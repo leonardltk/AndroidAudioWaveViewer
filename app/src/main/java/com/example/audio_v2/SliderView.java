@@ -17,7 +17,6 @@ public class SliderView extends View {
 
     Path path;
     Paint paint;
-    float length;
     private int samplingRate = 16000;
     private int SkipSample = 30; // Resolution for display
 
@@ -47,15 +46,14 @@ public class SliderView extends View {
     @Override
     public void onDraw(Canvas c){
         super.onDraw(c);
-
-        /* bg color */
+        /** Background color */
         c.drawColor(Color.TRANSPARENT);
 
         c.drawPath(path, paint);
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = 20000; // To cater to a song that is as long as 20000/16000 seconds
+        int width = 100; // To cater to a song that is as long as 20000/16000 seconds
         int height = heightMeasureSpec; // heightMeasureSpec MeasureSpec.getSize(heightMeasureSpec)
         setMeasuredDimension(width, height);
     }

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     /* -- Beats Params -- */
     ArrayList<Integer> Beats;
     /* -- Scroll Params -- */
-    int StartDelay = 600;
+    int StartDelay = 900;
     int SkipSample = 30; // Resolution for display
     /* -- Canvas Params -- */
     private HorizontalScrollView mHScrollView;
