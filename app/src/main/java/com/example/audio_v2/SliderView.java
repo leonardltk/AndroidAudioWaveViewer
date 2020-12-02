@@ -36,7 +36,7 @@ public class SliderView extends View {
     }
     public void init(@Nullable AttributeSet set) {
         paint = new Paint();
-        paint.setColor(Color.BLUE);
+        paint.setColor(Color.WHITE);
         paint.setStrokeWidth(10);
         paint.setStyle(Paint.Style.STROKE);
 

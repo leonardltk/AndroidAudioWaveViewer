@@ -25,8 +25,6 @@ public class WaveformView extends View {
     private static final int LINE_SCALE = 150; //scales visualiser lines, default=150
     private int viewWidth;
     private int viewHeight;
-    private Paint currentLinePointer;
-    ShapeDrawable mRect;
     /* Waveform */
     private ArrayList<Float> amplitudes;
     Integer hop_length = 128;
@@ -39,6 +37,7 @@ public class WaveformView extends View {
     float SampleIdx;
     int QuadShift = 0;
     private Paint beatPaint; // beats line characteristics
+    private Paint MinorBeatsPaint; // For the in betweens beats. Default to quads
     /* debug */
     private Paint debugPaint;
 
@@ -52,11 +51,6 @@ public class WaveformView extends View {
         init(attrs);
     }
     public void init(@Nullable AttributeSet set){
-        /* ? */
-        currentLinePointer = new Paint();
-        currentLinePointer.setColor(Color.TRANSPARENT);
-        currentLinePointer.setStrokeWidth(LINE_WIDTH);
-
         /* Waveform */
         linePaint = new Paint ();
         linePaint.setColor(Color.GREEN);
@@ -67,17 +61,12 @@ public class WaveformView extends View {
         beatPaint = new Paint ();
         beatPaint.setColor(Color.RED);
         beatPaint.setStrokeWidth(5);
-        Beats = new ArrayList<>();
         Beats = initBeats();
 
         /* debug */
-        debugPaint = new Paint ();
-        debugPaint.setColor(Color.WHITE);
-        debugPaint.setStrokeWidth(5);
-
-        /* Slider : Color of rectangle to draw */
-        mRect = new ShapeDrawable(new RectShape());
-        mRect.getPaint().setColor(Color.BLUE);
+        MinorBeatsPaint = new Paint ();
+        MinorBeatsPaint.setColor(Color.WHITE);
+        MinorBeatsPaint.setStrokeWidth(5);
     }
     public ArrayList<Float> initAmplitudes(){
         amplitudes = new ArrayList<>();
@@ -156,7 +145,7 @@ public class WaveformView extends View {
                 canvas.drawLine(
                         SampleIdx + jdx*QuadShift, 0,
                         SampleIdx + jdx*QuadShift, viewHeight,
-                        debugPaint);
+                        MinorBeatsPaint);
             }
         }
     }
@@ -171,24 +160,20 @@ public class WaveformView extends View {
     }
 
     /** Waveform */
-    public void setAmplitudes(ArrayList<Float> amplitudesIN){
+    public void drawAmplitudes(ArrayList<Float> amplitudesIN){
         amplitudes = amplitudesIN;
+        postInvalidate();
     }
     public void clearAmplitudes(){
         amplitudes.clear();
     }
-    public void drawAmplitudes(){
-        postInvalidate();
-    }
 
     /** Beats */
-    public void setBeats(ArrayList<Integer> BeatsIN){
+    public void drawBeats(ArrayList<Integer> BeatsIN){
         Beats = BeatsIN;
+        postInvalidate();
     }
     public void clearBeats(){
         Beats.clear();
-    }
-    public void drawBeats(){
-        postInvalidate();
     }
 }
