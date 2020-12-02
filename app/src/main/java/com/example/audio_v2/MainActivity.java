@@ -3,7 +3,6 @@ package com.example.audio_v2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -39,10 +37,7 @@ public class MainActivity extends AppCompatActivity {
     /* -- Beats Params -- */
     ArrayList<Integer> Beats;
     /* -- Scroll Params -- */
-    int StartDelay = 600; // 1000;
-    int totalDur;
-    int CountDownInterval = 1;
-    int ScrollBy = 12; // [12, 13, 15]
+    int StartDelay = 600;
     int SkipSample = 30; // Resolution for display
     /* -- Canvas Params -- */
     private HorizontalScrollView mHScrollView;
@@ -85,62 +80,21 @@ public class MainActivity extends AppCompatActivity {
         /** Slider */
         mSliderView.Draw1(NumSamples);
 
-        /** Scroll the Canvas (1) */
-//        // https://stackoverflow.com/questions/7202193/scroll-up-a-scrollview-slowly
-//        // https://www.daniweb.com/programming/mobile-development/threads/500977/how-to-start-countdown-timer-with-delay
-//        totalDur = DurMilli - 1500; // -1200
-//        /* This is baseline. Follows quite closely but quite choppy. */
-////        int multiplier = 10;
-////        int CountDownInterval = 800/multiplier; // Half of the canvas is about 0.6 seconds long
-////        int ScrollBy = 600/multiplier; // Half of the canvas is about 500dp wide
-//        /* This halves well */
-////        int CountDownInterval = 600; // 600 1200 1800
-////        int ScrollBy = 369;
-//        /* Lag of StartDelay before scrolling */
-//        new CountDownTimer(StartDelay, StartDelay) {
-//            public void onTick(long millisUntilFinished) {
-//            }
-//            public void onFinish() {
-//
-//                /** Start Scrolling */
-//                new CountDownTimer(totalDur, CountDownInterval) {
-//                    public void onTick(long millisUntilFinished) {
-//                        mHScrollView.smoothScrollBy(ScrollBy,0);
-////                        mHScrollView.scrollBy(ScrollBy, 0);
-//                    }
-//                    public void onFinish() {
-//                    }
-//                }.start();
-//                /** End Scrolling */
-//            }
-//        }.start();
-
-        /** Scroll the Canvas (2) */
-//        // https://stackoverflow.com/questions/7202193/scroll-up-a-scrollview-slowly
-//        ValueAnimator realSmoothScrollAnimation = ValueAnimator.ofInt(mHScrollView.getScrollX(), 1000);
-//        realSmoothScrollAnimation.setDuration(DurMilli);
-//        realSmoothScrollAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-//        {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation)
-//            {
-//                mHScrollView.scrollTo(NumSamples/SkipSample - 500, 0);
-//            }
-//        });
-//        realSmoothScrollAnimation.start();
-
-        /** Scroll the Canvas (3) */
-        // https://stackoverflow.com/questions/20944186/scrollto0-250-with-animation-android-scrollview
-        // https://stackoverflow.com/questions/8642677/reduce-speed-of-smooth-scroll-in-scroll-view
+        /** Scroll the Canvas */
+        // https://stackoverflow.com/questions/7202193/scroll-up-a-scrollview-slowly // Implement scroll within CountDownTimer()
+        // https://www.daniweb.com/programming/mobile-development/threads/500977/how-to-start-countdown-timer-with-delay // for nested CountDownTimer()
+        // https://stackoverflow.com/questions/20944186/scrollto0-250-with-animation-android-scrollview // Use ObjectAnimator.ofInt()
+        // https://stackoverflow.com/questions/8642677/reduce-speed-of-smooth-scroll-in-scroll-view // also use ObjectAnimator.ofInt()
+        /* Delay the scrolling by StartDelay to place the slider in the middle of the screen*/
         new CountDownTimer(StartDelay, StartDelay) {
             public void onTick(long millisUntilFinished) {
             }
             public void onFinish() {
-                /** Start Scrolling */
+                /* At the end of the delay,
+                start Scrolling together with the slider. */
                 ObjectAnimator.ofInt(
                         mHScrollView, "scrollX",
-                        NumSamples/SkipSample - (int) (0.5*samplingRate/SkipSample)).setDuration(DurMilli - 600).start();
-                /** End Scrolling */
+                        (NumSamples/SkipSample) - (StartDelay/2) ).setDuration(DurMilli - StartDelay).start();
             }
         }.start();
     }

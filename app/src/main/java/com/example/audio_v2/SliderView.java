@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.graphics.Path;
-
 import androidx.annotation.Nullable;
 
 public class SliderView extends View {
