@@ -5,10 +5,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.graphics.Path;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 public class SliderView extends View {
     // https://stackoverflow.com/questions/5367950/android-drawing-an-animated-line
@@ -19,6 +21,7 @@ public class SliderView extends View {
     Paint paint;
     private int samplingRate = 16000;
     private int SkipSample = 30; // Resolution for display
+    private ObjectAnimator SliderAnimator; // Animation to start/stop sliding
 
     public SliderView(Context context){
         super(context);
@@ -58,13 +61,24 @@ public class SliderView extends View {
         setMeasuredDimension(width, height);
     }
 
-    public void Draw1(int NumSamples){
-        ObjectAnimator animator = ObjectAnimator.ofFloat(
+    public void StartSliding(int NumSamples){
+        SliderAnimator = ObjectAnimator.ofFloat(
                 SliderView.this, "translationX",
                 0, NumSamples/SkipSample);
-        animator.setDuration(NumSamples*1000/samplingRate);
-        animator.start();
+        SliderAnimator.setDuration(NumSamples*1000/samplingRate);
+        SliderAnimator.start();
 
         postInvalidate();
+    }
+    public void StopSliding(){
+        SliderAnimator.cancel();
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void PauseResumeSliding(int flag){
+        if (flag==0){
+            SliderAnimator.pause();
+        } else {
+            SliderAnimator.resume();
+        }
     }
 }

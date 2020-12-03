@@ -1,10 +1,12 @@
 package com.example.audio_v2;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -24,25 +26,30 @@ import net.galmiza.android.engine.sound.SoundEngine;
 
 public class MainActivity extends AppCompatActivity {
     /** ------------ Variables ------------ */
-    /* Template song */
-    MediaPlayer mySong;
-    /* Attributes */
-    private SoundEngine nativeLib;
-    private int samplingRate = 16000;
-    private int hop_length = 128;
-    /* -- Wave Params -- */
-    ArrayList<Float> amplitudes;
-    int NumSamples;
-    int DurMilli;
-    /* -- Beats Params -- */
-    ArrayList<Integer> Beats;
-    /* -- Scroll Params -- */
-    int StartDelay = 900;
-    int SkipSample = 30; // Resolution for display
-    /* -- Canvas Params -- */
-    private HorizontalScrollView mHScrollView;
-    private WaveformView mWaveformView;
-    private SliderView mSliderView;
+    // Template song
+    public MediaPlayer mySong;
+    // Attributes
+    public SoundEngine nativeLib;
+    public int samplingRate = 16000;
+    public int hop_length = 128;
+    // -- Scroll Params --
+    public int StartDelay = 900;
+    public int SkipSample = 30; // Resolution for display
+    public ObjectAnimator ScrollAnimator; // Animation to start/stop scrolling
+    // -- Canvas Params --
+    public HorizontalScrollView mHScrollView;
+    public WaveformView mWaveformView;
+    public SliderView mSliderView;
+    // -- Buttons Params --
+    public TextView PauseResumeTextView;
+    public int PauseResumeFlag = 0;
+    public int PausedLength;
+    // -- Wave Params --
+    public ArrayList<Float> amplitudes;
+    public int NumSamples;
+    public int DurMilli;
+    // -- Beats Params --
+    public ArrayList<Integer> Beats;
 
 
     /** ------------ When App start, run these by default ------------ */
@@ -62,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         mHScrollView = (HorizontalScrollView) findViewById(R.id.hscroll);
         mWaveformView = (WaveformView) findViewById(R.id.waveformView);
         mSliderView = (SliderView) findViewById(R.id.sliderview);
+
+        /** Pause/Resume Button */
+        PauseResumeTextView = findViewById(R.id.pause_button);
     }
     /* When pause the application, stop the song. */
     @Override
@@ -71,37 +81,84 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /** ------------ Play/Pause Buttons. ------------ */
+    /** ------------ Play Pause/Resume Stop Buttons. ------------ */
     /* Play button. */
     public void playIT(View v){
         /** Play Song */
         mySong.start();
 
         /** Slider */
-        mSliderView.Draw1(NumSamples);
+        mSliderView.StartSliding(NumSamples);
 
         /** Scroll the Canvas */
         // https://stackoverflow.com/questions/7202193/scroll-up-a-scrollview-slowly // Implement scroll within CountDownTimer()
         // https://www.daniweb.com/programming/mobile-development/threads/500977/how-to-start-countdown-timer-with-delay // for nested CountDownTimer()
         // https://stackoverflow.com/questions/20944186/scrollto0-250-with-animation-android-scrollview // Use ObjectAnimator.ofInt()
         // https://stackoverflow.com/questions/8642677/reduce-speed-of-smooth-scroll-in-scroll-view // also use ObjectAnimator.ofInt()
-        /* Delay the scrolling by StartDelay to place the slider in the middle of the screen*/
+        /* Restart from the front if have not done so. */
+        mHScrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+        /* Delay the scrolling by StartDelay to place the slider in the middle of the screen */
+        ScrollAnimator = ObjectAnimator.ofInt(
+                mHScrollView, "scrollX",
+                (NumSamples/SkipSample) - (StartDelay/2) );
         new CountDownTimer(StartDelay, StartDelay) {
             public void onTick(long millisUntilFinished) {
             }
             public void onFinish() {
                 /* At the end of the delay,
                 start Scrolling together with the slider. */
-                ObjectAnimator.ofInt(
-                        mHScrollView, "scrollX",
-                        (NumSamples/SkipSample) - (StartDelay/2) ).setDuration(DurMilli - StartDelay).start();
+                ScrollAnimator.setDuration(DurMilli - StartDelay).start();
             }
         }.start();
     }
     /* Stop button. */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void pauseIT(View v){
+        /** Pause */
+        if (PauseResumeFlag == 0){
+            /** Pause song */
+            mySong.pause();
+            PausedLength = mySong.getCurrentPosition();
+
+            /** Pause Sliding : PauseResumeFlag==0 */
+            mSliderView.PauseResumeSliding(PauseResumeFlag);
+
+            /** Pause Scrolling */
+            ScrollAnimator.pause();
+
+            /** Set flag and Button Text to Resume */
+            PauseResumeFlag = 1;
+            PauseResumeTextView.setText("Resume");
+        }
+        /** Resume */
+        else {
+            /** Resume song */
+            mySong.seekTo(PausedLength);
+            mySong.start();
+
+            /** Resume Sliding : PauseResumeFlag==1 */
+            mSliderView.PauseResumeSliding(PauseResumeFlag);
+
+            /** Resume Scrolling */
+            ScrollAnimator.resume();
+
+            /** Set flag and Button Text to Pause */
+            PauseResumeFlag = 0;
+            PauseResumeTextView.setText("Pause");
+        }
+    }
+    /* Stop button. */
     public void stopIT(View v){
+        /** Stop song */
         mySong.release();
         mySong = MediaPlayer.create(MainActivity.this, R.raw.test);
+
+        /** Stop Sliding */
+        mSliderView.StopSliding();
+
+        /** Stop Scrolling */
+        ScrollAnimator.cancel();
+        mHScrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
     }
 
 
